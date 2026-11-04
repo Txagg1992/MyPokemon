@@ -1,13 +1,24 @@
 package com.curiousapps.mypoke.data.remote.responses
 
+
+import com.google.gson.annotations.SerializedName
 data class VersionsX(
-    val generation-i: GenerationIX,
-    val generation-ii: GenerationIiX,
-    val generation-iii: GenerationIii,
-    val generation-iv: GenerationIv,
-    val generation-ix: GenerationIxX,
-    val generation-v: GenerationV,
-    val generation-vi: GenerationVi,
-    val generation-vii: GenerationVii,
-    val generation-viii: GenerationViii
+    @SerializedName("generation-i")
+    val generationI: GenerationIX,
+    @SerializedName("generation-ii")
+    val generationIi: GenerationIiX,
+    @SerializedName("generation-iii")
+    val generationIii: GenerationIii,
+    @SerializedName("generation-iv")
+    val generationIv: GenerationIv,
+    @SerializedName("generation-ix")
+    val generationIx: GenerationIxX,
+    @SerializedName("generation-v")
+    val generationV: GenerationV,
+    @SerializedName("generation-vi")
+    val generationVi: GenerationVi,
+    @SerializedName("generation-vii")
+    val generationVii: GenerationVii,
+    @SerializedName("generation-viii")
+    val generationViii: GenerationViii
 )

@@ -1,5 +1,8 @@
 package com.curiousapps.mypoke.data.remote.responses
 
+
+import com.google.gson.annotations.SerializedName
 data class GenerationIi(
-    val gold-and-silver: GoldAndSilver
+    @SerializedName("gold-and-silver")
+    val goldAndSilver: GoldAndSilver
 )

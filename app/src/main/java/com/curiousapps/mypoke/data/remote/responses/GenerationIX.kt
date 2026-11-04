@@ -1,7 +1,11 @@
 package com.curiousapps.mypoke.data.remote.responses
 
+
+import com.google.gson.annotations.SerializedName
 data class GenerationIX(
-    val red-blue: RedBlue,
-    val red-green-japan: RedGreenJapan,
+    @SerializedName("red-blue")
+    val redBlue: RedBlue,
+    @SerializedName("red-green-japan")
+    val redGreenJapan: RedGreenJapan,
     val yellow: Yellow
 )

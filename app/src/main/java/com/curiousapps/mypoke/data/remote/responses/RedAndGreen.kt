@@ -1,5 +1,8 @@
 package com.curiousapps.mypoke.data.remote.responses
 
+import com.google.gson.annotations.SerializedName
+
 data class RedAndGreen(
-    val front_default: String
+    @SerializedName("front_default")
+    val frontDefault: String
 )

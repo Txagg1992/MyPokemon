@@ -1,7 +1,11 @@
 package com.curiousapps.mypoke.data.remote.responses
 
+
+import com.google.gson.annotations.SerializedName
 data class GenerationVii(
     val icons: IconsXXXX,
-    val lets-go-pikachu-lets-go-eevee: LetsGoPikachuLetsGoEevee,
-    val ultra-sun-ultra-moon: UltraSunUltraMoon
+    @SerializedName("lets-go-pikachu-lets-go-eevee")
+    val letsGoPikachuLetsGoEevee: LetsGoPikachuLetsGoEevee,
+    @SerializedName("ultra-sun-ultra-moon")
+    val ultraSunUltraMoon: UltraSunUltraMoon
 )

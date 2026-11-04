@@ -1,8 +1,12 @@
 package com.curiousapps.mypoke.data.remote.responses
 
+
+import com.google.gson.annotations.SerializedName
 data class GenerationIii(
     val emerald: Emerald,
-    val firered-leafgreen: FireredLeafgreen,
+    @SerializedName("firered-leafgreen")
+    val fireredLeafgreen: FireredLeafgreen,
     val icons: Icons,
-    val ruby-sapphire: RubySapphire
+    @SerializedName("ruby-sapphire")
+    val rubySapphire: RubySapphire
 )

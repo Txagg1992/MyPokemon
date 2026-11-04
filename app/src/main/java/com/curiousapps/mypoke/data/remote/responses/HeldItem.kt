@@ -1,6 +1,9 @@
 package com.curiousapps.mypoke.data.remote.responses
 
+import com.google.gson.annotations.SerializedName
+
 data class HeldItem(
     val item: Item,
-    val version_details: List<VersionDetail>
+    @SerializedName("version_details")
+    val versionDetails: List<VersionDetail>
 )
