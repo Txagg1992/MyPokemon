@@ -21,12 +21,14 @@ navigationCompose = "2.9.7"
 paletteKtx = "1.0.0"
 retrofit = "3.0.0"
 room_version = "2.6.1"
+runtime = "1.0.0"
 kotlinx-metadata-jvm = "0.9.0"
 timber = "5.0.1"
 
 #plugin versions
 devtools-ksp = "2.3.4"
 dagger-hilt = "2.59.2"
+
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -64,6 +66,7 @@ androidx-room-runtime = { group = "androidx.room", name = "room-runtime", versio
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room_version"}
 kotlinx-metadata-jvm = { group = "org.jetbrains.kotlinx", name = "kotlinx-metadata-jvm", version.ref = "kotlinx-metadata-jvm" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
+androidx-runtime = { group = "androidx.xr.runtime", name = "runtime", version.ref = "runtime" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

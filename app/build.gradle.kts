@@ -48,6 +48,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout.compose)
     implementation(libs.androidx.material.icons.core)
     implementation(libs.androidx.material.icons.extended)
+    implementation(libs.androidx.runtime)
 
     //Coil
     implementation (libs.coil.compose)
