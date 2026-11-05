@@ -5,6 +5,7 @@ import com.curiousapps.mypoke.data.remote.responses.PokemonList
 import com.curiousapps.mypoke.network.PokeApi
 import com.curiousapps.mypoke.util.Resource
 import dagger.hilt.android.scopes.ActivityScoped
+import timber.log.Timber
 import javax.inject.Inject
 
 @ActivityScoped
@@ -24,6 +25,7 @@ class PokemonRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             return Resource.Error("An unknown error occurred: $e")
         }
+        Timber.tag("enoch").i("getPokemonList:%s", Resource.Success(response))
         return Resource.Success(response)
     }
 

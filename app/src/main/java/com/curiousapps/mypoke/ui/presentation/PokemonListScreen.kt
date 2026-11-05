@@ -3,8 +3,10 @@ package com.curiousapps.mypoke.ui.presentation
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,9 +15,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -46,10 +50,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import coil.Coil
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
-
 import com.curiousapps.mypoke.R
 import com.curiousapps.mypoke.data.model.PokeDexList
 import com.curiousapps.mypoke.ui.theme.RobotoCondensed
@@ -78,9 +80,10 @@ fun PokemonListScreen(
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
-                //viewModel.searchPokemonList(it)
-                //navController.navigate("pokemon_list_screen")
+
             }
+            Spacer(modifier = Modifier.height(16.dp))
+            PokemonList(navController = navController)
         }
     }
 
@@ -133,6 +136,52 @@ fun SearchBar(
         }
     }
 }
+
+@Composable
+fun PokemonList(
+    navController: NavController,
+    viewModel: PokemonListViewModel = hiltViewModel()
+){
+    val pokemonList by remember { viewModel.pokemonList }
+    val endReached by remember { viewModel.endReached }
+    val loadError by remember { viewModel.loadError }
+    val isLoading by remember { viewModel.isLoading }
+
+    LazyColumn(contentPadding = PaddingValues(16.dp)){
+        val itemCount = if(pokemonList.size % 2 == 0){
+            pokemonList.size / 2
+        }else{
+            pokemonList.size / 2 + 1
+        }
+        items(itemCount){
+            if(it >= itemCount - 1 && !endReached){
+                viewModel.loadPokemonPaginated()
+            }
+            PokeDexRow(
+                rowIndex = it,
+                entries = pokemonList,
+                navController = navController
+            )
+        }
+    }
+
+    Box(
+        contentAlignment = Center,
+        modifier = Modifier.fillMaxSize()
+    ){
+        if(isLoading){
+            CircularProgressIndicator(color = Color.Red)
+        }
+        if(loadError.isNotEmpty()){
+            RetrySection(error = loadError) {
+                viewModel.loadPokemonPaginated()
+            }
+        }
+    }
+
+}
+
+
 
 @Composable
 fun PokeDexEntry(
@@ -191,7 +240,7 @@ fun PokeDexEntry(
                 fontFamily = RobotoCondensed,
                 fontSize = 20.sp,
                 textAlign = TextAlign.Center,
-                modifier = modifier
+                modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp)
             )
@@ -228,4 +277,26 @@ fun PokeDexRow(
     }
 }
 
-
+@Composable
+fun RetrySection(
+    error: String,
+    onRetry: () -> Unit
+){
+    Column(
+        horizontalAlignment = CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = error,
+            color = Color.Red,
+            fontSize = 18.sp
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Button(
+            onClick = { onRetry() },
+            modifier = Modifier
+        ) {
+            Text(text = "Retry")
+        }
+    }
+}
