@@ -13,6 +13,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.curiousapps.mypoke.ui.presentation.PokemonListScreen
+import com.curiousapps.mypoke.ui.presentation.pokemonDetail.PokemonDetailScreen
 import com.curiousapps.mypoke.ui.theme.MyPokeTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -49,6 +50,12 @@ class MainActivity : ComponentActivity() {
                         val pokemonName = remember {
                             it.arguments?.getString("pokemonName")
                         }
+
+                        PokemonDetailScreen(
+                            dominantColor = dominantColor,
+                            name = pokemonName?.lowercase() ?: "",
+                            navController = navController
+                        )
                     }
                 }
             }
