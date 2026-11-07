@@ -94,7 +94,10 @@ fun loadPokemonPaginated() {
                 isLoading.value = false
             }
 
-            is Resource.Loading<*> -> TODO()
+            is Resource.Loading -> {
+                loadError.value = result.message!!
+                isLoading.value = false
+            }
         }
     }
 
