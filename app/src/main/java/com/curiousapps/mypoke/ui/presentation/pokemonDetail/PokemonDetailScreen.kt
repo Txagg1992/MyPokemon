@@ -1,8 +1,11 @@
 package com.curiousapps.mypoke.ui.presentation.pokemonDetail
 
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +14,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -22,13 +26,16 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,6 +58,8 @@ import com.curiousapps.mypoke.R
 import com.curiousapps.mypoke.data.remote.responses.Pokemon
 import com.curiousapps.mypoke.data.remote.responses.Type
 import com.curiousapps.mypoke.util.Resource
+import com.curiousapps.mypoke.util.parseStatToAbbr
+import com.curiousapps.mypoke.util.parseStatToColor
 import com.curiousapps.mypoke.util.parseTypeToColor
 import timber.log.Timber
 import java.util.Locale
@@ -67,7 +76,7 @@ fun PokemonDetailScreen(
     viewModel: PokemonDetailViewModel = hiltViewModel()
     //viewModel: PokemonDetailViewModel = hiltNavGraphViewModel()
 ) {
-    val pokemonInfo = produceState<Resource<Pokemon>>(initialValue = Resource.Loading()) {
+    val pokemonInfo = produceState(initialValue = Resource.Loading()) {
         value = viewModel.getPokemonInfo(name)
     }.value
 
@@ -241,6 +250,7 @@ fun PokemonDetailSection(
             pokemonWeight = pokemonInfo.weight,
             pokemonHeight = pokemonInfo.height
         )
+        PokemonBaseStats(pokemonInfo = pokemonInfo)
     }
 }
 
@@ -281,8 +291,8 @@ fun PokemonTypeSection(
 fun PokemonDetailDataSection(
     pokemonWeight: Int,
     pokemonHeight: Int,
+    modifier: Modifier = Modifier,
     sectionHeight: Dp = 80.dp,
-    modifier: Modifier = Modifier
 ) {
     val pokemonWeightInKg = remember {
         round(pokemonWeight * 100f) / 1000f
@@ -330,11 +340,106 @@ fun PokemonDetailDataItem(
         Icon(
             painter = dataIcon,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurface
+            tint = colorScheme.onSurface
         )
         Text(
             text = "$dataValue$dataUnit",
             color = colorScheme.onSurface
         )
+    }
+}
+
+@Composable
+fun PokemonStat(
+    statName: String,
+    statValue: Int,
+    statMaxValue: Int,
+    statColor: Color,
+    height: Dp = 28.dp,
+    animationDuration: Int = 1000,
+    animationDelay: Int = 0
+) {
+    var animationPlayed by remember {
+        mutableStateOf(false)
+    }
+    val currentPercent = animateFloatAsState(
+        targetValue = if (animationPlayed) {
+            statValue / statMaxValue.toFloat()
+        } else 0f,
+        animationSpec = tween(
+            durationMillis = animationDuration,
+            delayMillis = animationDelay
+        )
+    )
+    LaunchedEffect(key1 = true) {
+        animationPlayed = true
+    }
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(height)
+            .clip(CircleShape)
+            .background(
+                if (isSystemInDarkTheme()) {
+                    Color.DarkGray
+                } else {
+                    Color.LightGray
+                }
+            )
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxHeight()
+                .fillMaxWidth(currentPercent.value)
+                .clip(CircleShape)
+                .background(statColor)
+                .padding(horizontal = 8.dp),
+        ) {
+            Text(
+                text = statName,
+                fontWeight = FontWeight.Bold,
+                color = colorScheme.onSurface
+            )
+            Text(
+                text = "${(currentPercent.value * statMaxValue).toInt()}",
+                fontWeight = FontWeight.Bold,
+                color = colorScheme.onSurface
+            )
+        }
+    }
+}
+
+@Composable
+fun PokemonBaseStats(
+    pokemonInfo: Pokemon,
+    animateDelayPerItem: Int = 100,
+    modifier: Modifier = Modifier
+) {
+    val maxBaseStat = remember { pokemonInfo.stats.maxOf { it.baseStat } }
+
+    Column(
+        modifier = modifier
+            .fillMaxWidth(),
+
+        ) {
+        Text(
+            text = "Base stats:",
+            fontSize = 20.sp,
+            color = colorScheme.onSurface
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        for (i in pokemonInfo.stats.indices) {
+            val stat = pokemonInfo.stats[i]
+            PokemonStat(
+                statName = parseStatToAbbr(stat),
+                statValue = stat.baseStat,
+                statMaxValue = maxBaseStat,
+                statColor = parseStatToColor(stat),
+                animationDelay = i * animateDelayPerItem
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+        }
     }
 }
